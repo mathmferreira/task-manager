@@ -40,7 +40,6 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        // Problema: sem tratamento de exceção
         Task task = taskRepository.findById(id).get();
         return ResponseEntity.ok(task);
     }
