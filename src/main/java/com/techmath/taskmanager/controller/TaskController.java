@@ -1,8 +1,11 @@
 package com.techmath.taskmanager.controller;
 
-import com.techmath.taskmanager.model.Task;
-import com.techmath.taskmanager.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.techmath.taskmanager.dto.TaskRequest;
+import com.techmath.taskmanager.dto.TaskResponse;
+import com.techmath.taskmanager.service.TaskService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,53 +20,40 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
+@RequiredArgsConstructor
 public class TaskController {
 
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        if (task.getStatus() == null || task.getStatus().isEmpty()) {
-            task.setStatus("PENDING");
-        }
-
-        Task savedTask = taskRepository.save(task);
-        return ResponseEntity.ok(savedTask);
+    public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest request) {
+        TaskResponse response = taskService.createTask(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
-        List<Task> tasks = taskRepository.findAll();
+    public ResponseEntity<List<TaskResponse>> getAllTasks() {
+        List<TaskResponse> tasks = taskService.getAllTasks();
         return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        Task task = taskRepository.findById(id).get();
-        return ResponseEntity.ok(task);
+    public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
+        TaskResponse response = taskService.getTaskById(id);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
-        Task task = taskRepository.findById(id).get();
-
-        task.setTitle(taskDetails.getTitle());
-        task.setDescription(taskDetails.getDescription());
-
-        if (taskDetails.getStatus() == null || taskDetails.getStatus().isEmpty()) {
-            task.setStatus("PENDING");
-        } else {
-            task.setStatus(taskDetails.getStatus());
-        }
-
-        Task updatedTask = taskRepository.save(task);
-        return ResponseEntity.ok(updatedTask);
+    public ResponseEntity<TaskResponse> updateTask(
+            @PathVariable Long id,
+            @Valid @RequestBody TaskRequest request) {
+        TaskResponse response = taskService.updateTask(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        taskRepository.deleteById(id);
+        taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
     }
 
