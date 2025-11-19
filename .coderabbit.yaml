@@ -1,0 +1,70 @@
+language: pt-br
+
+reviews:
+  auto_review:
+    enabled: true
+  request_changes_workflow: true
+  high_level_summary: true
+  poem: false
+  review_status: true
+
+  path_filters:
+    - "!**/test/**"
+    - "!**/*.md"
+
+knowledge_base:
+  - Java best practices
+  - Spring Boot conventions
+  - Clean Code principles
+  - SOLID principles
+
+checks:
+  - security
+  - performance
+  - best-practices
+  - code-smells
+  - maintainability
+  - error-handling
+  - testing
+
+rules:
+  - name: "No field injection"
+    pattern: "@Autowired.*private"
+    message: "Use constructor injection instead of field injection"
+    severity: warning
+
+  - name: "Exception handling required"
+    pattern: "\\.get\\(\\)"
+    message: "Use orElseThrow() or proper exception handling"
+    severity: error
+
+  - name: "Magic strings"
+    pattern: '"[A-Z_]+"|\'[A-Z_]+\''
+    message: "Extract magic strings to constants or enums"
+    severity: warning
+
+  - name: "Business logic in controller"
+    pattern: "@RestController.*\\{[\\s\\S]*?repository\\."
+    message: "Move business logic to service layer"
+    severity: error
+
+spring_boot:
+  enforce_service_layer: true
+  require_dto_pattern: true
+  validate_rest_endpoints: true
+  check_transaction_boundaries: true
+
+code_quality:
+  max_method_length: 20
+  max_class_length: 200
+  cyclomatic_complexity: 10
+  cognitive_complexity: 15
+
+validations:
+  null_safety: strict
+  exception_handling: required
+  input_validation: required
+
+tone: educational
+provide_examples: true
+explain_rationale: true
