@@ -1,0 +1,98 @@
+language: pt-BR
+tone_instructions: 'Seja direto e educacional. Foque em problemas reais de arquitetura e boas práticas Java/Spring Boot.'
+early_access: false
+enable_free_tier: true
+
+reviews:
+  profile: assertive
+  request_changes_workflow: true
+  high_level_summary: true
+  review_status: true
+  commit_status: true
+  poem: false
+  collapse_walkthrough: false
+  changed_files_summary: true
+
+  path_filters:
+    - '**/*.java'
+    - '!**/test/**'
+    - '!**/target/**'
+    - '!**/.git/**'
+
+  path_instructions:
+    - path: '**/*.java'
+      instructions: |
+        Review usando Java 17+ e Spring Boot 3.x best practices:
+        - OBRIGATÓRIO: Service layer para business logic (controllers devem ser finos)
+        - OBRIGATÓRIO: Constructor injection (nunca field injection com @Autowired)
+        - OBRIGATÓRIO: Exception handling adequado (nunca .get() sem tratamento)
+        - OBRIGATÓRIO: DTOs para entrada/saída de APIs (nunca expor entidades diretamente)
+        - OBRIGATÓRIO: Validação de input (@Valid + Bean Validation)
+        - Enums para constantes (não magic strings)
+        - ResponseEntity com status HTTP corretos
+        - Global exception handler (@ControllerAdvice)
+        - Imutabilidade quando possível
+        - Code duplication é inaceitável
+
+    - path: '**/controller/**/*.java'
+      instructions: |
+        Controllers devem:
+        - Apenas orquestrar (delegate para service)
+        - Usar DTOs (nunca entidades)
+        - Ter exception handling via @ControllerAdvice
+        - Retornar ResponseEntity com status correto
+        - Validar input com @Valid
+        - Máximo 20 linhas por método
+
+    - path: '**/service/**/*.java'
+      instructions: |
+        Services devem:
+        - Conter toda business logic
+        - Usar @Transactional quando necessário
+        - Lançar exceptions de negócio claras
+        - Não acessar DTOs (trabalhar com entidades)
+
+    - path: '**/model/**/*.java'
+      instructions: |
+        Entidades devem:
+        - Ter validações JPA adequadas
+        - Usar enums para campos com valores fixos
+        - Não ter business logic
+        - Ter constructors adequados
+
+  abort_on_close: true
+
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+    base_branches:
+      - 'main'
+
+  tools:
+    github-checks:
+      enabled: true
+      timeout_ms: 90000
+
+    pmd:
+      enabled: true
+
+    semgrep:
+      enabled: true
+
+    gitleaks:
+      enabled: true
+
+    eslint:
+      enabled: false
+
+    shellcheck:
+      enabled: false
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  opt_out: false
+  learnings:
+    scope: auto
